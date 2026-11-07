@@ -87,7 +87,7 @@ function download(ext) {
 <template>
   <header>
     <h1>中小企業診断士2次試験解答用紙メーカー</h1>
-    <p>中小企業診断士 2次試験の再現答案を貼り付けると、1行20マスの原稿用紙に1マスずつ書いた形で Word（.docx）・PDF に出力します。</p>
+    <p>中小企業診断士 2次試験の再現答案を貼り付けると、1行20マスの解答用紙に1マスずつ書いた形で Word（.docx）・PDF に出力します。</p>
   </header>
   <main>
     <section class="panel">
