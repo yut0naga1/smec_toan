@@ -1,6 +1,6 @@
 # 中小企業診断士2次試験解答用紙メーカー
 
-中小企業診断士2次試験の再現答案を貼り付けると、1行20マスの原稿用紙に1マスずつ書いた形で Word（.docx）・PDF を出力するサイト。Vue 3 + Vite。入力はブラウザ内で処理し、外部に送信しない。
+中小企業診断士2次試験の再現答案を貼り付けると、1行20マスの解答用紙に1マスずつ書いた形で Word（.docx）・PDF を出力するサイト。Vue 3 + Vite。入力はブラウザ内で処理し、外部に送信しない。
 
 公開URL: https://yut0naga1.github.io/smec_toan/
 
@@ -28,5 +28,5 @@ npm run build    # dist/ に出力
   - docx: 無圧縮ZIPを自前で組み立て
   - pdf: 非埋め込みの標準日本語フォント（HeiseiMin-W3 / HeiseiKakuGo-W5, UniJIS-UCS2-H）。1文字ずつ座標指定するため代替フォントでもマスがずれない
 - `src/App.vue` — 入力フォームとダウンロード
-- `src/components/GenkouSheet.vue` — 1設問分の原稿用紙プレビュー
+- `src/components/GenkouSheet.vue` — 1設問分の解答用紙プレビュー
 - `test/genkou.test.mjs` — ロジックのテスト
