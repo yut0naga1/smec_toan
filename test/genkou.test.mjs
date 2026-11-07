@@ -78,3 +78,19 @@ test('pdf はヘッダと xref を持ち、オフセットが正しい', () => {
   offs.forEach((o, i) => assert.ok(s.slice(o).startsWith(`${i + 1} 0 obj`)));
   assert.ok(/\/Count [2-9]/.test(s)); // 複数ページ
 });
+
+test('設問ごとに書き出しを1マスあける', () => {
+  const src = '# 第1問 100字\nあいう\n# 第2問 100字\nあいう';
+  const [a, b] = G.layout(src, { indents: { 1: true } });
+  assert.equal(a.rows[0][0].text, 'あ');
+  assert.equal(b.rows[0][0].text, '');
+  assert.equal(b.rows[0][1].text, 'あ');
+  assert.equal(b.indent, true);
+  assert.equal(b.count, 4);
+});
+
+test('改行を残すときは各段落の書き出しをあける（空行は除く）', () => {
+  const [a] = G.layout('あ\n\nい', { keepNewlines: true, indents: { 0: true } });
+  assert.equal(a.rows[0][1].text, 'あ');
+  assert.equal(a.rows[2][1].text, 'い');
+});

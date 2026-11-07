@@ -107,11 +107,14 @@ function parse(input, opts) {
 }
 
 /** 1ブロックをレイアウトする（改行を残す場合は改行ごとに次の行へ） */
-function layoutBlock(block, opts) {
+function layoutBlock(block, opts, indent) {
   const paragraphs = block.body.split('\n');
   let rows = [];
   for (const p of paragraphs) {
-    const r = toRows(toCells(p), opts);
+    const cells = toCells(p);
+    // 段落の書き出しを1マスあける（空の段落はそのまま）
+    if (indent && cells.length) cells.unshift({ text: '', half: false, hang: '' });
+    const r = toRows(cells, opts);
     rows = rows.concat(r.length ? r : [[]]);
   }
   if (rows.length === 1 && rows[0].length === 0) rows = [];
@@ -127,12 +130,15 @@ function layoutBlock(block, opts) {
     limit: block.limit,
     count,
     over: block.limit ? count > block.limit : false,
+    indent: !!indent,
     rows,
   };
 }
 
+/** opts.indents: { [設問の番号(0始まり)]: true } の設問は段落の書き出しを1マスあける */
 function layout(input, opts) {
-  return parse(input, opts).map((b) => layoutBlock(b, opts));
+  const indents = (opts && opts.indents) || {};
+  return parse(input, opts).map((b, i) => layoutBlock(b, opts, indents[i]));
 }
 
 // ---------------------------------------------------------------- docx

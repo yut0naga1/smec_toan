@@ -4,6 +4,7 @@ import { COLS } from '../lib/genkou.js';
 
 // layout() が返す1設問分のブロック
 const props = defineProps({ block: { type: Object, required: true } });
+const emit = defineEmits(['update:indent']);
 
 const countLabel = computed(() => {
   const b = props.block;
@@ -29,6 +30,7 @@ function cellClass(r, c) {
       <template v-if="block.title">{{ block.title }} </template>
       <span :class="{ over: block.over }">{{ countLabel }}<template v-if="block.over"> 字数超過</template></span>
     </h2>
+    <label class="indent"><input type="checkbox" :checked="block.indent" @change="emit('update:indent', $event.target.checked)" /> 段落の書き出しを1マスあける</label>
     <div class="sheet">
       <template v-for="(row, r) in block.rows" :key="r">
         <div v-for="c in cols" :key="c" class="cell" :class="cellClass(r, c)">
@@ -42,6 +44,7 @@ function cellClass(r, c) {
 
 <style scoped>
 h2 { font-size: 14px; margin: 0 0 6px; font-weight: 600; }
+label.indent { display: block; font-size: 12px; margin: 0 0 6px; }
 h2 .over { color: var(--over); }
 .sheet { display: grid; grid-template-columns: repeat(20, var(--cell)) 34px; font-family: "Hiragino Mincho ProN", "Yu Mincho", "MS Mincho", serif; }
 .cell { width: var(--cell); height: var(--cell); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);

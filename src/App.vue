@@ -30,6 +30,24 @@ const font = ref(FONTS[0]);
 const brackets = ref(false);
 const keepNewlines = ref(false);
 const srcEl = ref(null);
+// 設問ごとの「書き出し1マスあけ」（設問の番号 → true）
+const INDENT_STORE = 'genkou-indents-v1';
+function loadIndents() {
+  try {
+    return JSON.parse(localStorage.getItem(INDENT_STORE)) || {};
+  } catch {
+    return {};
+  }
+}
+const indents = ref(loadIndents());
+function setIndent(i, on) {
+  indents.value = { ...indents.value, [i]: on };
+  try {
+    localStorage.setItem(INDENT_STORE, JSON.stringify(indents.value));
+  } catch {
+    /* 保存できない環境では何もしない */
+  }
+}
 
 watch(src, (v) => {
   try {
@@ -43,6 +61,7 @@ const blocks = computed(() =>
   layout(src.value, {
     brackets: brackets.value,
     keepNewlines: keepNewlines.value,
+    indents: indents.value,
     defaultLimit: limit.value > 0 ? limit.value : null,
   }),
 );
@@ -67,7 +86,7 @@ function download(ext) {
 
 <template>
   <header>
-    <h1>中小企業診断士原稿用紙メーカー</h1>
+    <h1>中小企業診断士2次試験解答用紙メーカー</h1>
     <p>中小企業診断士 2次試験の再現答案を貼り付けると、1行20マスの原稿用紙に1マスずつ書いた形で Word（.docx）・PDF に出力します。</p>
   </header>
   <main>
@@ -97,6 +116,7 @@ function download(ext) {
         ・全角1文字＝1マス。英数字など半角は1マスに2文字入ります（例：<code>RO</code><code>E1</code><code>0%</code>）。<br />
         ・行頭に来る句読点（、。）は前の行の最後のマスに一緒に入れます。<br />
         ・<code>#</code> で始まる行は設問の見出しです。見出しに「100字」のように書くとその字数分のマス目を用意し、超過を赤で示します。<br />
+        ・プレビューの各設問のチェックボックスで、その設問だけ段落の書き出しを1マスあけられます（「改行を残す」なら各段落、それ以外は冒頭）。<br />
         ・見出しがない場合は全体を1つの答案として扱います。貼り付け時の改行は既定で詰めます。<br />
         ・PDF は明朝＝平成明朝、ゴシック＝平成角ゴシック（閲覧環境のフォントで表示）になります。<br />
         ・入力内容はブラウザの中だけで処理され、どこにも送信されません。
@@ -104,7 +124,7 @@ function download(ext) {
     </section>
     <section class="panel">
       <div class="preview">
-        <GenkouSheet v-for="(b, i) in blocks" :key="i" :block="b" />
+        <GenkouSheet v-for="(b, i) in blocks" :key="i" :block="b" @update:indent="setIndent(i, $event)" />
         <p v-if="!blocks.length" class="empty">左に答案を貼り付けるとここにプレビューが出ます。</p>
       </div>
     </section>
